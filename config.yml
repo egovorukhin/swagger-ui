@@ -1,0 +1,7 @@
+root: ./dist
+port: 8080
+secure: false
+certificate:
+  cert:
+  key:
+  client_cert:
