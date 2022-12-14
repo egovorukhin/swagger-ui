@@ -6,6 +6,7 @@ import (
 )
 
 type Server struct {
+	Name        string       `json:"name"`
 	Root        string       `yaml:"root"`
 	Port        int          `yaml:"port"`
 	Secure      bool         `yaml:"secure"`
@@ -20,7 +21,7 @@ type Certificate struct {
 func (s *Server) Init() error {
 
 	app := fiber.New(fiber.Config{
-		AppName: "SwaggerUI",
+		AppName: s.Name,
 	})
 
 	app.Static("/", s.Root)
