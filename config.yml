@@ -7,3 +7,7 @@ certificate:
   cert:
   key:
   client_cert:
+timeout:
+  read: 30
+  write: 30
+  idle: 30
