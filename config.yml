@@ -1,5 +1,6 @@
 name:
 root: ./dist
+apiUri: 
 port: 8080
 secure: false
 certificate:
