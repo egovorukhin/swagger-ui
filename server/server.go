@@ -8,6 +8,7 @@ import (
 type Server struct {
 	Name        string       `json:"name"`
 	Root        string       `yaml:"root"`
+	ApiUri      string       `yaml:"apiUri"`
 	Port        int          `yaml:"port"`
 	Secure      bool         `yaml:"secure"`
 	Certificate *Certificate `yaml:"certificate"`
@@ -25,7 +26,9 @@ func (s *Server) Init() error {
 	})
 
 	app.Static("/", s.Root)
-	//app.Get("/")
+	app.Use(func(c *fiber.Ctx) error {
+		return proxy.Do(c, s.ApiUri+c.Path())
+	})
 
 	if s.Secure && s.Certificate != nil {
 		return app.ListenTLS(fmt.Sprintf(":%d", s.Port), s.Certificate.Cert, s.Certificate.Key)
