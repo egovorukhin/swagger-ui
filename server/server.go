@@ -12,6 +12,7 @@ type Server struct {
 	Port        int          `yaml:"port"`
 	Secure      bool         `yaml:"secure"`
 	Certificate *Certificate `yaml:"certificate"`
+	Timeout Timeout `yaml:"timeout"`
 }
 
 type Certificate struct {
@@ -19,20 +20,31 @@ type Certificate struct {
 	Key  string `yaml:"key"`
 }
 
+type Timeout struct {
+	Read  int `yaml:"read"`
+	Write int `yaml:"write"`
+	Idle  int `yaml:"idle"`
+}
+
 func (s *Server) Init() error {
 
 	app := fiber.New(fiber.Config{
 		AppName: s.Name,
+		ReadTimeout:  time.Duration(s.Timeout.Read) * time.Second,
+		WriteTimeout: time.Duration(s.Timeout.Write) * time.Second,
+		IdleTimeout:  time.Duration(s.Timeout.Idle) * time.Second,
 	})
 
 	app.Static("/", s.Root)
 	app.Use(func(c *fiber.Ctx) error {
 		return proxy.Do(c, s.ApiUri+c.Path())
 	})
+	
+	addr := fmt.Sprintf(":%d", s.Port)
 
 	if s.Secure && s.Certificate != nil {
-		return app.ListenTLS(fmt.Sprintf(":%d", s.Port), s.Certificate.Cert, s.Certificate.Key)
+		return app.ListenTLS(addr, s.Certificate.Cert, s.Certificate.Key)
 	}
 
-	return app.Listen(fmt.Sprintf(":%d", s.Port))
+	return app.Listen(addr)
 }
