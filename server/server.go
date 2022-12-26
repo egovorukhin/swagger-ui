@@ -3,8 +3,8 @@ package server
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-.       "time"
-.       "github.com/gofiber/fiber/v2/middleware/proxy"
+      "time"
+       "github.com/gofiber/fiber/v2/middleware/proxy"
 )
 
 type Server struct {
